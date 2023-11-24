@@ -1,3 +1,43 @@
 .App {
   text-align: center;
 }
+
+.custom-navbar {
+  background-color: #990000;
+  font-family: "Poppins", sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+.custom-navbar .navbar-brand img {
+  /* Add any specific styles for the logo image here */
+  width: 30px;
+  height: 30px;
+}
+
+.custom-navbar .nav-link {
+  transition: background-color 0.3s, color 0.3s;
+  position: relative;
+  padding: 10px;
+  margin: 0 15px;
+  font-size: 27px; /* Add the desired font size here */
+  color: white;
+}
+
+.custom-navbar .nav-link:hover {
+  background-color: #FFCC00;
+  color: black;
+  border-radius: 5px;
+}
+
+.custom-navbar .nav-link:hover::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 0px;
+  border: 0px solid black; /* You can adjust the border thickness and color as needed */
+  pointer-events: none;
+}

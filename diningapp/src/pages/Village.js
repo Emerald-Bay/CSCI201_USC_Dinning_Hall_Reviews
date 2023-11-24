@@ -1,11 +1,11 @@
 import React from 'react';
 
-const Dining = () => {
+const Village = () => {
     return (
         <div>
-            <p>Dining Component</p>
+            <p>Village Page</p>
         </div>
     );
 };
 
-export default Dining;
+export default Village;
