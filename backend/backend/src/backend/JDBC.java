@@ -178,7 +178,6 @@ public class JDBC {
 	public static void main(String[] args) {
 	    JDBC jdbcConnector = new JDBC();
 
-	    // Test review data
 	    String username = "201Group";
 	    String password = "Group"; //
 	    String title = "Great!";
@@ -246,13 +245,12 @@ public class JDBC {
 	public static void main(String[] args) {
 	    JDBC jdbcConnector = new JDBC();
 
-	    // Assuming you have the review ID and updated review information
+	    //have the review ID and updated review information
 	    int reviewIDToUpdate = 1; // Replace with the actual review ID to be updated
 	    String updatedTitle = "Hello";
-	    String updatedBody = null; // To keep body unchanged
+	    String updatedBody = null; //body unchanged
 	    Double updatedRating = 5.0; // Updated rating
-
-	    // Example usage:
+     
 	    int result = jdbcConnector.updateReview(reviewIDToUpdate, updatedTitle, updatedBody, updatedRating);
 
 	    if (result > 0) {
