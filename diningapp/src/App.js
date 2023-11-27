@@ -1,4 +1,5 @@
 import './styles/App.css';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -9,9 +10,13 @@ import Parkside from './pages/Parkside';
 import Village from './pages/Village';
 import Profile from './pages/Profile';
 import USCImage from './img/USCDining.jpg'; 
+import AddReview from './pages/AddReview';
+
 
 
 function App() {
+  const [loggedInUser, setLoggedInUser] = useState(null);
+
   return (
     <Router>
       <Navbar
@@ -46,16 +51,27 @@ function App() {
             <Nav.Link href="/parkside">Parkside</Nav.Link>
             <Nav.Link href="/village">Village</Nav.Link>
             <Nav.Link href="/profile">Profile</Nav.Link>
+            {/* <Nav.Link href="/add-review">Add Review</Nav.Link> */}
+            {loggedInUser ? (
+              <>
+                <Nav.Link href="/add-review">Add Review</Nav.Link>
+              </>
+            ) : null}
           </Nav>
         </Container>
       </Navbar>
 
       <Routes>
-        <Route path="/" element={<Welcome />} />
+        <Route path="/" element={<Welcome setLoggedInUser={setLoggedInUser} />} />
+        {/* <Route path="/" element={<Welcome />} /> */}
         <Route path="/evk" element={<EVK />} />
         <Route path="/parkside" element={<Parkside />} />
         <Route path="/village" element={<Village />} />
-        <Route path="/profile" element={<Profile />} />
+        {/* <Route path="/add-review" element={<AddReview />} /> */}
+        <Route
+          path="/add-review"
+          element={<AddReview loggedInUser={loggedInUser} />}
+        />
       </Routes>
     </Router>
   );

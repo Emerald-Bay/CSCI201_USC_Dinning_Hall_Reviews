@@ -1,12 +1,65 @@
-import React from 'react';
+import React, {useState} from 'react';
 import '../styles/Welcome.css';
+import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
-const Welcome = () => {
+const Welcome = ({ setLoggedInUser }) => {
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleLoginSubmit = (event) => {
+        
+        const loggedInUser = {
+            email: email,
+            password: password
+        };
+
+        console.log(loggedInUser);
+        fetch('http://localhost:8080/LoginServlet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(loggedInUser),
+        })
+        .then(response => response.json())
+        .then(jsonData => {
+            setLoggedInUser(jsonData); 
+            navigate('/add-review');
+        })
+        .catch(error => {
+            console.error('Error during login:', error);
+        });
+    };
+
+    const handleSignupSubmit = (event) => {
+        const newUser = {
+            username: email,
+            password: password,
+        };
+
+        fetch('http://localhost:8080/SignUpServlet', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newUser),
+        })
+        .then(response => response.json())
+        .then(jsonData => {
+            setLoggedInUser(jsonData); 
+            navigate('/add-review');
+        })
+        .catch(error => {
+            console.error('Error during signup:', error);
+        });
+    };
     return (
-        <Container >
+        <Container>
             <Row className='justify-content-center mt-3 mb-3'>
                 <Col className='text-center'>
                     <h2>Welcome!</h2>
@@ -18,20 +71,20 @@ const Welcome = () => {
                     <Form>
                         <Form.Group className="mb-3" controlId="formBasicEmail">
                             <Form.Label>Email address</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" />
+                            <Form.Control type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)}/>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" />
+                            <Form.Control type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
                         </Form.Group>
                         <div className='text-center'>
 
-                            <Button variant="danger" className='me-4' type="submit">
+                            <Button variant="danger" className='me-4' type="submit" onClick={(e) => handleLoginSubmit(e)}>
                                 Log in
                             </Button>
 
-                            <Button variant="warning" type="submit">
+                            <Button variant="warning" type="submit" onClick={handleSignupSubmit}>
                                 Register
                             </Button>
                         </div>
