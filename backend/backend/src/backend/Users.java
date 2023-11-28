@@ -17,12 +17,13 @@ public class Users {
 
     // Getters
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
+    
 
     // Setters
     public void setUsername(String username) {

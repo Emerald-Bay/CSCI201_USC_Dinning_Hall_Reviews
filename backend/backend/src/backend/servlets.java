@@ -12,7 +12,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement; 
 import java.sql.ResultSet; 
 import java.sql.SQLException; 
-import java.sql.Statement; 
+import java.sql.Statement;
+import org.json.JSONObject;
 
 @WebServlet("/LoginServlet")
 class LoginServlet extends HttpServlet {
@@ -44,15 +45,31 @@ class LoginServlet extends HttpServlet {
 				String resPassword = resultSet.getString("Password");
 				if(resPassword.equals(password)) {
 					Verified = true;
+					//Users newUser = new Users(username, password, String.valueOf(serialVersionUID));
+					JSONObject jsonResponse = new JSONObject();
+	                jsonResponse.put("status", "success");
+	                jsonResponse.put("username", username);
+	                out.print(jsonResponse.toString());
 				} else {
 					//Incorrect Password Error
+					JSONObject jsonResponse = new JSONObject();
+	                jsonResponse.put("status", "error");
+	                jsonResponse.put("message", "Incorrect Password.");
+	                out.print(jsonResponse.toString());
 				}
             
 			} else {
 				// User Not Found Error
+				JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put("status", "error");
+                jsonResponse.put("message", "User Not Found.");
+                out.print(jsonResponse.toString());
 			}
 		} catch (SQLException sqle) {             
-			System.out.println("SQLException: " + sqle.getMessage());         
+			JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "SQLException: " + sqle.getMessage());
+            out.print(jsonResponse.toString());         
 		} finally {             
 			try {                 
 				if (resultSet != null) {                     
@@ -88,10 +105,6 @@ class SignUpServlet extends HttpServlet {
 		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
-		String firstName = request.getParameter("firstName");
-		String lastName = request.getParameter("lastName");
-		int userId = request.getParameter("userID");
-		
 		
 		String jsonFile = "";
 		
@@ -101,25 +114,35 @@ class SignUpServlet extends HttpServlet {
 		PreparedStatement statement = null;         
 		boolean Verified = false;
 		try {             
-			conn = DriverManager.getConnection("[SQL SERVER URL]");             
-			String sql = "INSERT INTO User (Username, Password, FirstName, LastName, UserID) VALUES (?, ?, ?, ?, ?)";             
+			conn = DriverManager.getConnection("[SQL SERVER URL]");  
+			
+			String sql = "INSERT INTO User (Username, Password) VALUES (?, ?)";             
 			statement = conn.prepareStatement(sql);
 			statement.setString(1, username);
 		    statement.setString(2, password);
-		    statement.setString(3, firstName);
-		    statement.setString(4, lastName);
-		    statement.setInt(5, userId);
 		    
 			int rowsAffected = statement.executeQuery();             
 			         
 			if (rowsAffected > 0) {                 
 				// Success Response
+				JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put("status", "success");
+                jsonResponse.put("username", username);
+                jsonResponse.put("password", password);
+                out.print(jsonResponse.toString());
 			} else {
 				// Error Signing Up New User
+				JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put("status", "error");
+                jsonResponse.put("message", "Error in user registration.");
+                out.print(jsonResponse.toString());
 			}
 		} catch (SQLException sqle) {             
-			System.out.println("SQLException: " + sqle.getMessage());         
-		} finally {             
+			JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "SQLException: " + sqle.getMessage());
+            out.print(jsonResponse.toString());		
+        } finally {   
 			try {                 
 				if (resultSet != null) {                     
 					resultSet.close();                 
@@ -257,6 +280,7 @@ class WriteReviewServlet extends HttpServlet {
 @WebServlet("/ModifyReview")
 class ModifyReview extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final long ID_N = 1000000000000;
 	
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
@@ -267,7 +291,7 @@ class ModifyReview extends HttpServlet {
 		String title = request.getParameter("title");
 		String body = request.getParameter("body");
 		String rating = request.getParameter("rating");
-		String reviewID = request.getParameter("reviewID");
+		long reviewID = Math.random() * ID_N;
 		
 		String jsonFile = "";
 		
@@ -277,25 +301,60 @@ class ModifyReview extends HttpServlet {
 
         try {
             conn = DriverManager.getConnection("[SQL SERVER URL]");
+            
+            do {
+                String checkSql = "SELECT COUNT(*) FROM User WHERE ReviewID = ?";
+                checkStmt = conn.prepareStatement(checkSql);
+                checkStmt.setLong(1, reviewID);
+                resultSet = checkStmt.executeQuery();
 
-            String sql = "UPDATE Reviews SET Title = ?, Body = ?, Rating = ?, Username = ? WHERE ReviewID = ?";
+                reviewIdExists = false;
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    if (count > 0) {
+                        reviewIdExists = true;
+                        reviewID++; // Increment userId if it already exists
+                    }
+                }
+
+                if (checkStmt != null) {
+                    checkStmt.close();
+                }
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+            } while (userIdExists);
+
+            String sql = "INSERT INTO Reviews (Title, Body, Rating, Username, ReviewID) VALUES (?, ?, ?, ?, ?)";
             statement = conn.prepareStatement(sql);
 
             statement.setString(1, title);
             statement.setString(2, body);
             statement.setString(3, rating);
             statement.setString(4, username);
-            statement.setInt(5, reviewID);
+            statement.setInt(5, String.valueOf(reviewID));
 
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected > 0) {
                 // Success Output
+            	JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put("status", "success");
+                jsonResponse.put("ReviewID", String.valueOf(reviewID));
+                jsonResponse.put("Title", title);
+                out.print(jsonResponse.toString());
             } else {
                 // Error Updating Review
+            	JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put("status", "error");
+                jsonResponse.put("message", "Error while adding review to database.");
+                out.print(jsonResponse.toString());
             }
         } catch (SQLException sqle) {
-            out.println("SQLException: " + sqle.getMessage());
+        	JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("status", "error");
+            jsonResponse.put("message", "SQLException: " + sqle.getMessage());
+            out.print(jsonResponse.toString());
         } finally {
             try {
                 if (statement != null) {
