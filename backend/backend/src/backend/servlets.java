@@ -13,7 +13,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet; 
 import java.sql.SQLException; 
 import java.sql.Statement;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+
+public class ResponseMessage {
+	private String status;
+	private String message;
+	
+	public ResponseMessage(String s, String m) {
+		this.status = s;
+		this.message = m;
+	}
+}
 
 @WebServlet("/LoginServlet")
 class LoginServlet extends HttpServlet {
@@ -22,75 +32,96 @@ class LoginServlet extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
 		response.setContentType("application/html");
+		Gson gson = new Gson();
 		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
-		String jsonFile = "";
+		String status;
+		String msg;
 		
-		// Section for code to check mySQL database
-		
-		Connection conn = null;         
-		PreparedStatement statement = null;         
-		ResultSet resultSet = null; 
-		boolean Verified = false;
-		try {             
-			conn = DriverManager.getConnection("[SQL SERVER URL]");             
-			String sql = "SELECT Password FROM User WHERE Username = ?";             
-			statement = conn.prepareStatement(sql);
-			statement.setString(1, username);
-			resultSet = statement.executeQuery();             
-			         
-			if (resultSet.next()) {                 
-				String resPassword = resultSet.getString("Password");
-				if(resPassword.equals(password)) {
-					Verified = true;
-					//Users newUser = new Users(username, password, String.valueOf(serialVersionUID));
-					JSONObject jsonResponse = new JSONObject();
-	                jsonResponse.put("status", "success");
-	                jsonResponse.put("username", username);
-	                out.print(jsonResponse.toString());
-				} else {
-					//Incorrect Password Error
-					JSONObject jsonResponse = new JSONObject();
-	                jsonResponse.put("status", "error");
-	                jsonResponse.put("message", "Incorrect Password.");
-	                out.print(jsonResponse.toString());
-				}
-            
-			} else {
-				// User Not Found Error
-				JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("status", "error");
-                jsonResponse.put("message", "User Not Found.");
-                out.print(jsonResponse.toString());
-			}
-		} catch (SQLException sqle) {             
-			JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "SQLException: " + sqle.getMessage());
-            out.print(jsonResponse.toString());         
-		} finally {             
-			try {                 
-				if (resultSet != null) {                     
-					resultSet.close();                 
-				}                 
-				if (statement != null) {                     
-					statement.close();                 
-				}                 
-				if (conn != null) {                     
-					conn.close();                 
-				}             
-			} catch (SQLException sqle) {                 
-				System.out.println("sqle: " + sqle.getMessage());             
-			}         
+		if(JDBC.returningUser(username, password)) {
+			status = "success";
+			msg = "User authenticated";
+		} else {
+			status = "error";
+			msg = "Login error";
 		}
 		
-		// Section for code to send over all restaurant info if user/passwd are valid
-		
-		out.print(jsonFile);
-		
+		ResponseMessage rm = new ResponseMessage(status, msg);
+		String resJson = gson.toJson(rm);
+		try(out.print(resJson)){
+			out.flush();
+		} catch (IOException e) {
+			System.out.println(e.getStackTrace());
+		}
 		out.close();
+		
+//		String jsonFile = "";
+//		
+//		// Section for code to check mySQL database
+//		
+//		Connection conn = null;         
+//		PreparedStatement statement = null;         
+//		ResultSet resultSet = null; 
+//		boolean Verified = false;
+//		try {             
+//			conn = JDBC.getConnection();             
+//			String sql = "SELECT Password FROM User WHERE Username = ?";             
+//			statement = conn.prepareStatement(sql);
+//			statement.setString(1, username);
+//			resultSet = statement.executeQuery();             
+//			         
+//			if (resultSet.next()) {                 
+//				String resPassword = resultSet.getString("Password");
+//				if(resPassword.equals(password)) {
+//					Verified = true;
+//					//Users newUser = new Users(username, password, String.valueOf(serialVersionUID));
+//					JSONObject jsonResponse = new JSONObject();
+//	                jsonResponse.put("status", "success");
+//	                jsonResponse.put("username", username);
+//	                out.print(jsonResponse.toString());
+//				} else {
+//					//Incorrect Password Error
+//					JSONObject jsonResponse = new JSONObject();
+//	                jsonResponse.put("status", "error");
+//	                jsonResponse.put("message", "Incorrect Password.");
+//	                out.print(jsonResponse.toString());
+//				}
+//            
+//			} else {
+//				// User Not Found Error
+//				JSONObject jsonResponse = new JSONObject();
+//                jsonResponse.put("status", "error");
+//                jsonResponse.put("message", "User Not Found.");
+//                out.print(jsonResponse.toString());
+//			}
+//		} catch (SQLException sqle) {             
+//			JSONObject jsonResponse = new JSONObject();
+//            jsonResponse.put("status", "error");
+//            jsonResponse.put("message", "SQLException: " + sqle.getMessage());
+//            out.print(jsonResponse.toString());         
+//		} finally {             
+//			try {                 
+//				if (resultSet != null) {                     
+//					resultSet.close();                 
+//				}                 
+//				if (statement != null) {                     
+//					statement.close();                 
+//				}                 
+//				if (conn != null) {                     
+//					conn.close();                 
+//				}             
+//			} catch (SQLException sqle) {                 
+//				System.out.println("sqle: " + sqle.getMessage());             
+//			}         
+//		}
+//		
+//		// Section for code to send over all restaurant info if user/passwd are valid
+//		
+//		out.print(jsonFile);
+//		
+//		out.close();
 	}
 }
 
@@ -101,68 +132,99 @@ class SignUpServlet extends HttpServlet {
 	
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
+		Gson gson = new Gson();
 		response.setContentType("application/html");
 		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
-		String jsonFile = "";
+		int res = JDBC.insertNewUser(username, password);
 		
-		// Section for code to check mySQL database
-		
-		Connection conn = null;         
-		PreparedStatement statement = null;         
-		boolean Verified = false;
-		try {             
-			conn = DriverManager.getConnection("[SQL SERVER URL]");  
-			
-			String sql = "INSERT INTO User (Username, Password) VALUES (?, ?)";             
-			statement = conn.prepareStatement(sql);
-			statement.setString(1, username);
-		    statement.setString(2, password);
-		    
-			int rowsAffected = statement.executeQuery();             
-			         
-			if (rowsAffected > 0) {                 
-				// Success Response
-				JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("status", "success");
-                jsonResponse.put("username", username);
-                jsonResponse.put("password", password);
-                out.print(jsonResponse.toString());
-			} else {
-				// Error Signing Up New User
-				JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("status", "error");
-                jsonResponse.put("message", "Error in user registration.");
-                out.print(jsonResponse.toString());
-			}
-		} catch (SQLException sqle) {             
-			JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "SQLException: " + sqle.getMessage());
-            out.print(jsonResponse.toString());		
-        } finally {   
-			try {                 
-				if (resultSet != null) {                     
-					resultSet.close();                 
-				}                 
-				if (statement != null) {                     
-					statement.close();                 
-				}                 
-				if (conn != null) {                     
-					conn.close();                 
-				}             
-			} catch (SQLException sqle) {                 
-				System.out.println("sqle: " + sqle.getMessage());             
-			}         
+		String status;
+		String msg;
+		if(res >= 0) {
+			status = "success";
+			msg = "User signed up succesfully";
+		} else if(res == -1) {
+			status = "error";
+			msg = "Username already exists";
+		} else if(res == -3) {
+			status = "error";
+			msg = "Failed insertion to database";
+		} else if(res == -4) {
+			status = "error";
+			msg = "Failed to access user data";
+		} else if(res == -5) {
+			status = "error";
+			msg = "Execution error";
 		}
-		
-		// Section for code to send over all restaurant info if user/passwd are valid
-		
-		out.print(jsonFile);
-		
+		 
+		ResponseMessage rm = new ResponseMessage(status, msg);
+		String resJson = gson.toJson(rm);
+		try(out.print(resJson)){
+			out.flush();
+		} catch (IOException e) {
+			System.out.println(e.getStackTrace());
+		}
 		out.close();
+		
+//		String jsonFile = "";
+//		
+//		// Section for code to check mySQL database
+//		
+//		Connection conn = null;         
+//		PreparedStatement statement = null;         
+//		boolean Verified = false;
+//		try {             
+//			conn = JDBC.getConnection();  
+//			
+//			String sql = "INSERT INTO User (Username, Password) VALUES (?, ?)";             
+//			statement = conn.prepareStatement(sql);
+//			statement.setString(1, username);
+//		    statement.setString(2, password);
+//		    
+//			int rowsAffected = statement.executeQuery();             
+//			         
+//			if (rowsAffected > 0) {                 
+//				// Success Response
+//				JSONObject jsonResponse = new JSONObject();
+//                jsonResponse.put("status", "success");
+//                jsonResponse.put("username", username);
+//                jsonResponse.put("password", password);
+//                out.print(jsonResponse.toString());
+//			} else {
+//				// Error Signing Up New User
+//				JSONObject jsonResponse = new JSONObject();
+//                jsonResponse.put("status", "error");
+//                jsonResponse.put("message", "Error in user registration.");
+//                out.print(jsonResponse.toString());
+//			}
+//		} catch (SQLException sqle) {             
+//			JSONObject jsonResponse = new JSONObject();
+//            jsonResponse.put("status", "error");
+//            jsonResponse.put("message", "SQLException: " + sqle.getMessage());
+//            out.print(jsonResponse.toString());		
+//        } finally {   
+//			try {                 
+//				if (resultSet != null) {                     
+//					resultSet.close();                 
+//				}                 
+//				if (statement != null) {                     
+//					statement.close();                 
+//				}                 
+//				if (conn != null) {                     
+//					conn.close();                 
+//				}             
+//			} catch (SQLException sqle) {                 
+//				System.out.println("sqle: " + sqle.getMessage());             
+//			}         
+//		}
+//		
+//		// Section for code to send over all restaurant info if user/passwd are valid
+//		
+//		out.print(jsonFile);
+//		
+//		out.close();
 	}
 }
 
@@ -187,7 +249,7 @@ class ForgotPassword extends HttpServlet {
 		ResultSet resultSet = null; 
 		boolean Verified = false;
 		try {             
-			conn = DriverManager.getConnection("[SQL SERVER URL]");             
+			conn = JDBC.getConnection();             
 			String sql = "SELECT COUNT(*) FROM Users WHERE username = ?";
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, username);
@@ -277,99 +339,125 @@ class WriteReviewServlet extends HttpServlet {
 	}
 }
 
-@WebServlet("/ModifyReview")
+@WebServlet("/AddReview")
 class ModifyReview extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final long ID_N = 1000000000000;
 	
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
+		Gson gson = new Gson();
 		response.setContentType("application/html");
 		
+		String dininghall = request.getParameter("dininghall");
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String title = request.getParameter("title");
 		String body = request.getParameter("body");
-		String rating = request.getParameter("rating");
-		long reviewID = Math.random() * ID_N;
+		double rating = request.getParameter("rating");
 		
-		String jsonFile = "";
+		int res = JDBC.insertReview(dininghall, username, password, title, body, rating);
 		
-		// Section for code to update information on mySQL database
-		Connection conn = null;
-        PreparedStatement statement = null;
-
-        try {
-            conn = DriverManager.getConnection("[SQL SERVER URL]");
-            
-            do {
-                String checkSql = "SELECT COUNT(*) FROM User WHERE ReviewID = ?";
-                checkStmt = conn.prepareStatement(checkSql);
-                checkStmt.setLong(1, reviewID);
-                resultSet = checkStmt.executeQuery();
-
-                reviewIdExists = false;
-                if (resultSet.next()) {
-                    int count = resultSet.getInt(1);
-                    if (count > 0) {
-                        reviewIdExists = true;
-                        reviewID++; // Increment userId if it already exists
-                    }
-                }
-
-                if (checkStmt != null) {
-                    checkStmt.close();
-                }
-                if (resultSet != null) {
-                    resultSet.close();
-                }
-            } while (userIdExists);
-
-            String sql = "INSERT INTO Reviews (Title, Body, Rating, Username, ReviewID) VALUES (?, ?, ?, ?, ?)";
-            statement = conn.prepareStatement(sql);
-
-            statement.setString(1, title);
-            statement.setString(2, body);
-            statement.setString(3, rating);
-            statement.setString(4, username);
-            statement.setInt(5, String.valueOf(reviewID));
-
-            int rowsAffected = statement.executeUpdate();
-
-            if (rowsAffected > 0) {
-                // Success Output
-            	JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("status", "success");
-                jsonResponse.put("ReviewID", String.valueOf(reviewID));
-                jsonResponse.put("Title", title);
-                out.print(jsonResponse.toString());
-            } else {
-                // Error Updating Review
-            	JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("status", "error");
-                jsonResponse.put("message", "Error while adding review to database.");
-                out.print(jsonResponse.toString());
-            }
-        } catch (SQLException sqle) {
-        	JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("status", "error");
-            jsonResponse.put("message", "SQLException: " + sqle.getMessage());
-            out.print(jsonResponse.toString());
-        } finally {
-            try {
-                if (statement != null) {
-                    statement.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException sqle) {
-                out.println("SQLException on close: " + sqle.getMessage());
-            }
-        }
+		String status;
+		String msg;
+		if(res) {
+			status = "success";
+			msg = "Review added";
+		} else if(res == -1) {
+			status = "error";
+			msg = "User not found/Authentication failed";
+		} else if(res == -2) {
+			status = "error";
+			msg = "Failed to insert review";
+		} else {
+			status = "error";
+			msg = "SQL error";
+		}
 		
-		out.print(jsonFile);
-		
+		ResponseMessage rm = new ResponseMessage(status, msg);
+		String resJson = gson.toJson(rm);
+		try(out.print(resJson)){
+			out.flush();
+		} catch (IOException e) {
+			System.out.println(e.getStackTrace());
+		}
 		out.close();
+//		String jsonFile = "";
+//		
+//		// Section for code to update information on mySQL database
+//		Connection conn = null;
+//        PreparedStatement statement = null;
+//
+//        try {
+//            conn = JDBC.getConnection();
+//            
+//            do {
+//                String checkSql = "SELECT COUNT(*) FROM User WHERE ReviewID = ?";
+//                checkStmt = conn.prepareStatement(checkSql);
+//                checkStmt.setLong(1, reviewID);
+//                resultSet = checkStmt.executeQuery();
+//
+//                reviewIdExists = false;
+//                if (resultSet.next()) {
+//                    int count = resultSet.getInt(1);
+//                    if (count > 0) {
+//                        reviewIdExists = true;
+//                        reviewID++; // Increment userId if it already exists
+//                    }
+//                }
+//
+//                if (checkStmt != null) {
+//                    checkStmt.close();
+//                }
+//                if (resultSet != null) {
+//                    resultSet.close();
+//                }
+//            } while (userIdExists);
+//
+//            String sql = "INSERT INTO Reviews (Title, Body, Rating, Username, ReviewID) VALUES (?, ?, ?, ?, ?)";
+//            statement = conn.prepareStatement(sql);
+//
+//            statement.setString(1, title);
+//            statement.setString(2, body);
+//            statement.setString(3, rating);
+//            statement.setString(4, username);
+//            statement.setInt(5, String.valueOf(reviewID));
+//
+//            int rowsAffected = statement.executeUpdate();
+//
+//            if (rowsAffected > 0) {
+//                // Success Output
+//            	JSONObject jsonResponse = new JSONObject();
+//                jsonResponse.put("status", "success");
+//                jsonResponse.put("ReviewID", String.valueOf(reviewID));
+//                jsonResponse.put("Title", title);
+//                out.print(jsonResponse.toString());
+//            } else {
+//                // Error Updating Review
+//            	JSONObject jsonResponse = new JSONObject();
+//                jsonResponse.put("status", "error");
+//                jsonResponse.put("message", "Error while adding review to database.");
+//                out.print(jsonResponse.toString());
+//            }
+//        } catch (SQLException sqle) {
+//        	JSONObject jsonResponse = new JSONObject();
+//            jsonResponse.put("status", "error");
+//            jsonResponse.put("message", "SQLException: " + sqle.getMessage());
+//            out.print(jsonResponse.toString());
+//        } finally {
+//            try {
+//                if (statement != null) {
+//                    statement.close();
+//                }
+//                if (conn != null) {
+//                    conn.close();
+//                }
+//            } catch (SQLException sqle) {
+//                out.println("SQLException on close: " + sqle.getMessage());
+//            }
+//        }
+//		
+//		out.print(jsonFile);
+//		
+//		out.close();
 	}
 }
