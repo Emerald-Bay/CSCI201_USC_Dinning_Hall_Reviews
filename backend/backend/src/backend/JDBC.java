@@ -249,6 +249,27 @@ public class JDBC {
 	    }
 	}
 
+	//delete a review
+	public void removeReview(int reviewID) {
+	    try (Connection connection = getConnection();
+	         PreparedStatement deleteReview = connection.prepareStatement("DELETE FROM Reviews WHERE review_ID = ?")) {
+
+	        deleteReview.setInt(1, reviewID);
+	        int deletedRows = deleteReview.executeUpdate();
+
+	        if (deletedRows > 0) {
+	            System.out.println("Review with ID " + reviewID + " removed successfully.");
+	        } else {
+	            System.out.println("No review found with ID " + reviewID);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        // Handle SQL exception
+	    }
+	}
+	
+
 
 	/**
 	public static void main(String[] args) {
