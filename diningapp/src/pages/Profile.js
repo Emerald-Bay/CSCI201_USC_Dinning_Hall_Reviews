@@ -10,7 +10,7 @@ const Profile = () => {
     });
 
     useEffect(() => {
-        const username = data.username;
+        const username = username;
         fetch(`http://localhost:8080/UserProfileServlet?username=${encodeURIComponent(username)}`)
             .then(response => response.json())
             .then(data => {
