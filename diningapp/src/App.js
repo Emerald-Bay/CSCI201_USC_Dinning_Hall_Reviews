@@ -67,6 +67,8 @@ function App() {
         <Route path="/evk" element={<EVK />} />
         <Route path="/parkside" element={<Parkside />} />
         <Route path="/village" element={<Village />} />
+        <Route path="/profile" element={<Profile />} /> 
+
         {/* <Route path="/add-review" element={<AddReview />} /> */}
         <Route
           path="/add-review"
