@@ -7,19 +7,17 @@ public class UserProfileServlet extends HttpServlet {
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        try {
-            Connection connection = JDBC.getConnection();
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM Users WHERE username = ?");
+        try (Connection conn = JDBC.getConnection();
+             PreparedStatement ps = conn.prepareStatement("SELECT username, other_user_info FROM Users WHERE username = ?")) {
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                User user = new User(rs.getString("username"), rs.getString("password"));
+                User user = new User(rs.getString("username"), rs.getString("other_user_info"));
                 Gson gson = new Gson();
-                String userJson = gson.toJson(user);
-                out.print(userJson);
+                out.print(gson.toJson(user));
             } else {
-                out.print("{}"); // Empty JSON object if user not found
+                out.print("{}");
             }
         } catch (SQLException e) {
             e.printStackTrace();
