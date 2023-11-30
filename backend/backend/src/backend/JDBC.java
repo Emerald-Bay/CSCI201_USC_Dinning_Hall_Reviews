@@ -328,7 +328,16 @@ public class JDBC {
         // Test menu data
         String diningHallName = "Sample Dining Hall";
         String menuItem = "Pasta";
-        Date date = new Date(); // Assuming today's date
+        //Date date = new Date(); // Assuming today's date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        Date date;
+        try {
+            date = dateFormat.parse("04/26/2001");
+        } catch (ParseException e) {
+            // Handle parsing exception if required
+            date = new Date(); // Default to today's date in case of parsing error
+        }
+        
 
         // Test inserting a menu item
         int result = tester.insertMenu(diningHallName, menuItem, date);
