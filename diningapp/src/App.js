@@ -1,4 +1,4 @@
-import './styles/App.css';
+import './styles/App.css'; // ju lee
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Nav from "react-bootstrap/Nav";
