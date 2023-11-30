@@ -323,39 +323,73 @@ public class JDBC {
 	/**
 	//test insert menu item
 	public static void main(String[] args) {
-        JDBC tester = new JDBC();
+	        JDBC tester = new JDBC();
+	
+	        // Test menu data
+	        String diningHallName = "Sample Dining Hall";
+	        String menuItem = "Pasta";
+	        //Date date = new Date(); // Assuming today's date
+	        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+	        Date date;
+	        try {
+	            date = dateFormat.parse("04/26/2001");
+	        } catch (ParseException e) {
+	            // Handle parsing exception if required
+	            date = new Date(); // Default to today's date in case of parsing error
+	        }
+	        
+	
+	        // Test inserting a menu item
+	        int result = tester.insertMenu(diningHallName, menuItem, date);
+	
+	        if (result > 0) {
+	            System.out.println("Menu item inserted successfully");
+	        } else if (result == -1) {
+	            System.out.println("Failed to insert menu item");
+	        } else {
+	            System.out.println("Error occurred while inserting menu item");
+	        }
+	}
 
-        // Test menu data
-        String diningHallName = "Sample Dining Hall";
-        String menuItem = "Pasta";
-        //Date date = new Date(); // Assuming today's date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        Date date;
-        try {
-            date = dateFormat.parse("04/26/2001");
-        } catch (ParseException e) {
-            // Handle parsing exception if required
-            date = new Date(); // Default to today's date in case of parsing error
-        }
-        
+	**/
 
-        // Test inserting a menu item
-        int result = tester.insertMenu(diningHallName, menuItem, date);
+	//calculate average reviews of dining hall
+	public void calculateAndPopulateAverageRatings() {
+        try (Connection connection = getConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT DiningHall, AVG(rating) AS averageRating FROM Reviews GROUP BY DiningHall")) {
 
-        if (result > 0) {
-            System.out.println("Menu item inserted successfully");
-        } else if (result == -1) {
-            System.out.println("Failed to insert menu item");
-        } else {
-            System.out.println("Error occurred while inserting menu item");
+            Connection conn = getConnection(); // Separate connection for inserting into dininghall table
+            PreparedStatement insertStatement = conn.prepareStatement("INSERT INTO DiningHall (DiningHallName, AveRating) VALUES (?, ?)");
+
+            while (rs.next()) {
+                String diningHallName = rs.getString("DiningHallname");
+                double averageRating = rs.getDouble("averageRating");
+
+                // Insert average rating into dininghall table
+                insertStatement.setString(1, diningHallName);
+                insertStatement.setDouble(2, averageRating);
+                insertStatement.executeUpdate();
+            }
+
+            // Close the insert statement and connections
+            insertStatement.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 	
-	//dining hall reviews
-	public int averageDiningHallRating (String diningHallName, double rating) {
-		return 0;
-	}
+	/**
+	//test
+	public static void main(String[] args) {
+	        JDBC reviewProcessor = new JDBC();
+	        reviewProcessor.calculateAndPopulateAverageRatings();
+        }
 	**/
+	
+	
+	
 	
 	
 
