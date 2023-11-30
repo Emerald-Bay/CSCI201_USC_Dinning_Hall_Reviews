@@ -3,14 +3,16 @@ import { Container, Row, Col, Card } from 'react-bootstrap';
 
 const Profile = () => {
     const [user, setUser] = useState({ 
-        username: '', 
-        firstName: '',
-        lastName: '',
-        timestamp: '',
+        username: 'sampleUsername', 
+        firstName: 'sampleFirstName',
+        lastName: 'sampleLastName',
+        timestamp: 'sampleTimestamp',
     });
 
+
+    const username = 'the username of the logged-in user'; // Replace with actual username retrieval logic
+
     useEffect(() => {
-        const username = username;
         fetch(`http://localhost:8080/UserProfileServlet?username=${encodeURIComponent(username)}`)
             .then(response => response.json())
             .then(data => {
@@ -23,7 +25,7 @@ const Profile = () => {
             .catch(error => {
                 console.error('Error fetching user data:', error);
             });
-    }, []);
+    }, [username]); 
 
     return (
         <Container>
@@ -39,7 +41,8 @@ const Profile = () => {
                             <Card.Title>{user.firstName} {user.lastName}</Card.Title>
                             <Card.Text>
                                 <p><b>Username:</b> {user.username}</p>
-                                <p><b>Join Date:</b> {user.timestamp}</p>
+                                <p><b>Join Date:</b> {new Date(user.timestamp).toLocaleDateString()}</p>
+                                {/* Assuming timestamp is in a format that can be converted to a Date */}
                             </Card.Text>
                         </Card.Body>
                     </Card>
