@@ -16,8 +16,6 @@ import logo from './img/logo.jpg';
 
 
 function App() {
-  const [loggedInUser, setLoggedInUser] = useState(null);
-
   return (
     <Router>
       <Navbar
@@ -54,17 +52,12 @@ function App() {
             <Nav.Link href="/village">Village</Nav.Link>
             <Nav.Link href="/profile">Profile</Nav.Link>
             <Nav.Link href="/add-review">Add Review</Nav.Link>
-            {loggedInUser ? (
-              <>
-                <Nav.Link href="/add-review">Add Review</Nav.Link>
-              </>
-            ) : null}
           </Nav>
         </Container>
       </Navbar>
 
       <Routes>
-        <Route path="/" element={<Welcome setLoggedInUser={setLoggedInUser} />} />
+        <Route path="/" element={<Welcome />} />
         {/* <Route path="/" element={<Welcome />} /> */}
         <Route path="/evk" element={<EVK />} />
         <Route path="/parkside" element={<Parkside />} />
@@ -74,7 +67,7 @@ function App() {
         <Route path="/add-review" element={<AddReview />} />
         <Route
           path="/add-review"
-          element={<AddReview loggedInUser={loggedInUser} />}
+          element={<AddReview/>}
         />
       </Routes>
     </Router>

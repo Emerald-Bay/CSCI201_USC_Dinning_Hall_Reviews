@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Container, Row, Col } from "react-bootstrap";
 import Menu from '../components/Menu.js';
 import ReviewList from '../components/ReviewList.js';
@@ -8,8 +8,16 @@ import Image from 'react-bootstrap/Image';
 import EVKimg from '../img/EVKimg.jpg';
 
 const EVK = () => {
-    
+    const [loggedInUser, setLoggedInUser] = useState(null);
 
+    useEffect(() => {
+        // Check if user data exists in local storage
+        const storedUser = localStorage.getItem('loggedInUser');
+        if (storedUser) {
+          // Parse the stored user data and set it in the state
+          setLoggedInUser(JSON.parse(storedUser));
+        }
+    }, []); // The empty dependency array ensures this effect runs only once, similar to componentDidMount
 
     const evkItems = [
         'Persian Chicken with Turmeric and Lemon',

@@ -1,7 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+
 
 const Profile = () => {
+    const [loggedInUser, setLoggedInUser] = useState(null);
+    
+
+    useEffect(() => {
+        // Check if user data exists in local storage
+        const storedUser = localStorage.getItem('loggedInUser');
+        if (storedUser) {
+          // Parse the stored user data and set it in the state
+          setLoggedInUser(JSON.parse(storedUser));
+        }
+      }, []); // The empty dependency array ensures this effect runs only once, similar to componentDidMount
+
+    const handleLogout = () => {
+        // Clear user data from state and local storage
+        setLoggedInUser(null);
+        localStorage.removeItem('loggedInUser');
+    };
+
     const [user, setUser] = useState({ 
         username: 'sampleUsername', 
         firstName: 'sampleFirstName',
@@ -46,6 +66,18 @@ const Profile = () => {
                             </Card.Text>
                         </Card.Body>
                     </Card>
+                </Col>
+            </Row>
+            <Row className='justify-content-md-center mt-3 mb-3' >
+                <Col md={12} className='text-center'>
+                {loggedInUser ? (
+                    <>
+                        <p>Welcome {loggedInUser.username}</p>
+                        <Button variant="primary" type="submit" onClick={handleLogout}>
+                                Logout
+                            </Button>
+                    </>
+                    ) : null}
                 </Col>
             </Row>
         </Container>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import '../styles/Welcome.css';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col } from "react-bootstrap";
@@ -7,70 +7,77 @@ import Form from 'react-bootstrap/Form';
 import Image from 'react-bootstrap/Image';
 import USCVillageImg from '../img/USCVillageHall.jpg';
 
-const Welcome = ({ setLoggedInUser }) => {
+const Welcome = () => {
+    const [loggedInUser, setLoggedInUser] = useState(null);
     const navigate = useNavigate();
 
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
 
+    useEffect(() => {
+        // Check if user data exists in local storage
+        const storedUser = localStorage.getItem('loggedInUser');
+        if (storedUser) {
+          // Parse the stored user data and set it in the state
+          setLoggedInUser(JSON.parse(storedUser));
+        }
+      }, []); // The empty dependency array ensures this effect runs only once, similar to componentDidMount
+
     const handleLoginSubmit = (event) => {
-        event.preventDefault(); // Prevent default form submission
-        const loggedInUser = {
+        event.preventDefault();
+        const loginAttempt = {
             username: username,
             password: password,
             email: "filler"
         };
 
-        console.log(loggedInUser);
-        fetch('http://localhost:8080/201Final/LoginServlet', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(loggedInUser),
-        })
-        .then(response => response.json())
-        .then(jsonData => {
-            if(jsonData.status === "success") {
-                setLoggedInUser(jsonData); 
-                console.log(jsonData);
-                navigate('/add-review');
-            }
-        })
-        .catch(error => {
-            console.error('Error during login:', error);
-        });
+        // console.log(loggedInUser);
+        // fetch('http://localhost:8080/201Final/LoginServlet', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(loginAttempt),
+        // })
+        // .then(response => response.json())
+        // .then(jsonData => {
+        //     console.log("status: ", jsonData.status)
+        //     console.log("msg: ", jsonData.msg)
+        //     setLocalLoggedInUser(loginAttempt); 
+            
+        // })
+        // .catch(error => {
+        //     console.error('Error during login:', error);
+        // });
+        setLoggedInUser(loginAttempt);
+        localStorage.setItem('loggedInUser', JSON.stringify(loginAttempt));
+        navigate('/profile');
     };
 
     const handleSignupSubmit = (event) => {
         event.preventDefault(); // Prevent default form submission
 
-        const timestamp = new Date().toISOString();
-
         const newUser = {
             username: username,
             password: password,
-            registrationTimestamp: timestamp
         };
 
-        fetch('http://localhost:8080/201Final/SignUpServlet', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newUser),
-        })
-        .then(response => response.json())
-        .then(jsonData => {
-            if(jsonData.status === "success") {
-                setLoggedInUser(jsonData); 
-                console.log(jsonData);
-                navigate('/add-review');
-            }
-        })
-        .catch(error => {
-            console.error('Error during signup:', error);
-        });
+        // fetch('http://localhost:8080/SignUpServlet', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(newUser),
+        // })
+        // .then(response => response.json())
+        // .then(jsonData => {
+        //     console.log("status: ", jsonData.status)
+        //     console.log("msg: ", jsonData.msg)
+        //     setLoggedInUser(newUser); 
+        // })
+        // .catch(error => {
+        //     console.error('Error during signup:', error);
+        // });
     };
 
     return (
@@ -130,6 +137,7 @@ const Welcome = ({ setLoggedInUser }) => {
                     </Form>
                 </Col>
             </Row>
+            
         </Container>
     );
 };
