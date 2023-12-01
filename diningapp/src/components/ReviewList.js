@@ -1,10 +1,15 @@
 import React from 'react';
+import Stack from 'react-bootstrap/Stack';
+import Review from '../components/Review.js';
 
-const ReviewList = () => {
+
+const ReviewList = ({reviewArray}) => {
     return (
-        <div>
-            <p>ReviewList Component</p>
-        </div>
+        <Stack gap={3}>
+            {reviewArray.map((review, index) => (
+                <Review key={index} review={review} />
+            ))}
+        </Stack>
     );
 };
 

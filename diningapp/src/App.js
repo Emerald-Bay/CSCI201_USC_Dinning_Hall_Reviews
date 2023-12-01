@@ -9,8 +9,9 @@ import EVK from './pages/EVK';
 import Parkside from './pages/Parkside';
 import Village from './pages/Village';
 import Profile from './pages/Profile';
-import USCImage from './img/USCDining.jpg'; 
+// import USCImage from './img/USCDining.jpg'; 
 import AddReview from './pages/AddReview';
+import logo from './img/logo.jpg';
 
 
 
@@ -32,12 +33,13 @@ function App() {
           >
             <img
               alt="Your Logo"
-              src={USCImage}
+              src={logo}
               style={{ 
                 width: "100px",
-                height: "100px",
-                // marginTop: "-20px",
-                paddingTop: "0px"
+                height: "auto",
+                marginTop: "10px",
+                marginBottom: "10px",
+                // paddingTop: "10px",
                }}
               className="d-inline-block align-top"
             />
@@ -51,7 +53,7 @@ function App() {
             <Nav.Link href="/parkside">Parkside</Nav.Link>
             <Nav.Link href="/village">Village</Nav.Link>
             <Nav.Link href="/profile">Profile</Nav.Link>
-            {/* <Nav.Link href="/add-review">Add Review</Nav.Link> */}
+            <Nav.Link href="/add-review">Add Review</Nav.Link>
             {loggedInUser ? (
               <>
                 <Nav.Link href="/add-review">Add Review</Nav.Link>
@@ -69,7 +71,7 @@ function App() {
         <Route path="/village" element={<Village />} />
         <Route path="/profile" element={<Profile />} /> 
 
-        {/* <Route path="/add-review" element={<AddReview />} /> */}
+        <Route path="/add-review" element={<AddReview />} />
         <Route
           path="/add-review"
           element={<AddReview loggedInUser={loggedInUser} />}

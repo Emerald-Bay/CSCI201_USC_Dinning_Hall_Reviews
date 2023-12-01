@@ -12,7 +12,7 @@
 .custom-navbar .navbar-brand img {
   /* Add any specific styles for the logo image here */
   width: 30px;
-  height: 30px;
+  height: auto;
 }
 
 .custom-navbar .nav-link {

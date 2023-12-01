@@ -4,19 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Image from 'react-bootstrap/Image';
+import USCVillageImg from '../img/USCVillageHall.jpg';
 
 const Welcome = ({ setLoggedInUser }) => {
     const navigate = useNavigate();
 
-    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
+    const [username, setUsername] = useState("");
 
     const handleLoginSubmit = (event) => {
         
         const loggedInUser = {
-            email: email,
+            username: username,
             password: password
         };
 
@@ -44,9 +44,7 @@ const Welcome = ({ setLoggedInUser }) => {
         const timestamp = new Date().toISOString();
 
         const newUser = {
-            firstName: firstName,
-            lastName: lastName,
-            username: email,
+            username: username,
             password: password,
             registrationTimestamp: timestamp
         };
@@ -72,26 +70,41 @@ const Welcome = ({ setLoggedInUser }) => {
         <Container>
             <Row className='justify-content-center mt-3 mb-3'>
                 <Col className='text-center'>
-                    <h2>Welcome!</h2>
+                    <h2>Welcome to <code>TrojanBytes!</code></h2>
                 </Col>
             </Row>
-
-            <Row className='justify-content-md-center'>
+            <Row className='justify-content-center mt-3 mb-3'>
+                <Col className='text-center'>
+                    <code>Your one stop shop for USC dining</code>
+                </Col>
+            </Row>
+            <Row className='justify-content-md-center mb-3'>
+                <Col md={8} className='text-center'>
+                    <Image
+                        src={USCVillageImg}
+                        rounded
+                        width="90%"
+                    />
+                </Col>
+            </Row>
+                
+            <Row className='justify-content-md-center mt-3 mb-3'>
                 <Col md={6} className="border border-dark p-3">
+                    <Row>
+                        <Col className='text-center'>
+                            <h2>
+                                <code>
+                                    Sign Up
+                                </code>
+                            </h2>
+                            
+                        </Col>
+                    </Row>
                     <Form>
-                        <Form.Group className="mb-3" controlId="formBasicFirstName">
-                            <Form.Label>First Name</Form.Label>
-                            <Form.Control type="text" placeholder="Enter first name" onChange={(e) => setFirstName(e.target.value)} />
-                        </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formBasicLastName">
-                            <Form.Label>Last Name</Form.Label>
-                            <Form.Control type="text" placeholder="Enter last name" onChange={(e) => setLastName(e.target.value)} />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
-                            <Form.Label>Email address</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
+                        <Form.Group className="mb-3" controlId="formBasicUser">
+                            <Form.Label>Username</Form.Label>
+                            <Form.Control type="text" placeholder="Enter Username" onChange={(e) => setUsername(e.target.value)} />
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="formBasicPassword">
