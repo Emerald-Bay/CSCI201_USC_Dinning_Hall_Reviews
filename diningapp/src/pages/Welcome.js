@@ -21,7 +21,7 @@ const Welcome = ({ setLoggedInUser }) => {
         };
 
         console.log(loggedInUser);
-        fetch('http://localhost:8080/LoginServlet', {
+        fetch('http://localhost:8080/201Final/LoginServlet', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ const Welcome = ({ setLoggedInUser }) => {
             registrationTimestamp: timestamp
         };
 
-        fetch('http://localhost:8080/SignUpServlet', {
+        fetch('http://localhost:8080/201FInal/SignUpServlet', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
