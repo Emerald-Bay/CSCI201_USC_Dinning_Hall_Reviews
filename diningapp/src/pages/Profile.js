@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
+import userimg from '../img/userimg.png';
 
 const Profile = () => {
     const [loggedInUser, setLoggedInUser] = useState(null);
@@ -48,14 +49,17 @@ const Profile = () => {
         <Container>
             <Row className='justify-content-md-center mt-3 mb-3'>
                 <Col className='text-center'>
-                    <h2>{user.firstName}'s Profile</h2>
+                    <h2>{user.username}'s Profile</h2>
                 </Col>
             </Row>
             <Row className='justify-content-md-center'>
                 <Col md={6}>
                     <Card>
                         <Card.Body>
-                            <Card.Title>{user.firstName} {user.lastName}</Card.Title>
+                            <div className="text-center mb-3">
+                                <img src={userimg} alt={`${user.username}'s profile`} className="profile-image" />
+                            </div>
+                            <Card.Title>{user.username}</Card.Title>
                             <Card.Text>
                                 <p><b>Username:</b> {user.username}</p>
                                 <p><b>Join Date:</b> {new Date(user.timestamp).toLocaleDateString()}</p>
