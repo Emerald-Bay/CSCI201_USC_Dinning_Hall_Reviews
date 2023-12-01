@@ -14,10 +14,11 @@ const Welcome = ({ setLoggedInUser }) => {
     const [username, setUsername] = useState("");
 
     const handleLoginSubmit = (event) => {
-        
+        event.preventDefault(); // Prevent default form submission
         const loggedInUser = {
             username: username,
-            password: password
+            password: password,
+            email: "filler"
         };
 
         console.log(loggedInUser);
@@ -30,8 +31,11 @@ const Welcome = ({ setLoggedInUser }) => {
         })
         .then(response => response.json())
         .then(jsonData => {
-            setLoggedInUser(jsonData); 
-            navigate('/add-review');
+            if(jsonData.status === "success") {
+                setLoggedInUser(jsonData); 
+                console.log(jsonData);
+                navigate('/add-review');
+            }
         })
         .catch(error => {
             console.error('Error during login:', error);
@@ -49,7 +53,7 @@ const Welcome = ({ setLoggedInUser }) => {
             registrationTimestamp: timestamp
         };
 
-        fetch('http://localhost:8080/201FInal/SignUpServlet', {
+        fetch('http://localhost:8080/201Final/SignUpServlet', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -58,8 +62,11 @@ const Welcome = ({ setLoggedInUser }) => {
         })
         .then(response => response.json())
         .then(jsonData => {
-            setLoggedInUser(jsonData); 
-            navigate('/add-review');
+            if(jsonData.status === "success") {
+                setLoggedInUser(jsonData); 
+                console.log(jsonData);
+                navigate('/add-review');
+            }
         })
         .catch(error => {
             console.error('Error during signup:', error);
