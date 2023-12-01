@@ -23,7 +23,7 @@ const Profile = () => {
     // Effect to fetch user data from the servlet
     useEffect(() => {
         if (loggedInUser && loggedInUser.username) {
-            fetch(`http://localhost:8080/UserProfileServlet?username=${encodeURIComponent(loggedInUser.username)}`)
+            fetch(`http://localhost:8080/LoginServlet?username=${encodeURIComponent(loggedInUser.username)}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.username) {
