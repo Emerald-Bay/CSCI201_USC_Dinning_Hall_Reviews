@@ -51,7 +51,7 @@ function App() {
             <Nav.Link href="/parkside">Parkside</Nav.Link>
             <Nav.Link href="/village">Village</Nav.Link>
             <Nav.Link href="/profile">Profile</Nav.Link>
-            <Nav.Link href="/add-review">Add Review</Nav.Link>
+            {/* <Nav.Link href="/add-review">Add Review</Nav.Link> */}
           </Nav>
         </Container>
       </Navbar>
