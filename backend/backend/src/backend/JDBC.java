@@ -18,7 +18,7 @@ public class JDBC {
 	public static Connection getConnection() throws SQLException {
 	    try {
 	        Class.forName("com.mysql.cj.jdbc.Driver");
-	        String url = "jdbc:mysql://localhost/201Group?user=root&password=Divergent1";
+	        String url = "jdbc:mysql://localhost/group?user=root&password=Divergent1";
 	        return DriverManager.getConnection(url);
 	    } catch (ClassNotFoundException e) {
 	        throw new SQLException("Database driver not found", e);
