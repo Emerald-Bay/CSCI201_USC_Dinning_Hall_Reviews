@@ -355,30 +355,28 @@ public class JDBC {
 
 	//calculate average reviews of dining hall
 	public void calculateAndPopulateAverageRatings() {
-        try (Connection connection = getConnection();
-             Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT DiningHall, AVG(rating) AS averageRating FROM Reviews GROUP BY DiningHall")) {
+	    try (Connection connection = getConnection();
+	         Statement stmt = connection.createStatement();
+	         ResultSet rs = stmt.executeQuery("SELECT DiningHall, AVG(rating) AS averageRating FROM Reviews GROUP BY DiningHall")) {
 
-            Connection conn = getConnection(); // Separate connection for inserting into dininghall table
-            PreparedStatement insertStatement = conn.prepareStatement("INSERT INTO DiningHall (DiningHallName, AveRating) VALUES (?, ?)");
+	        PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO DiningHall (DiningHallName, AveRating) VALUES (?, ?)");
 
-            while (rs.next()) {
-                String diningHallName = rs.getString("DiningHallname");
-                double averageRating = rs.getDouble("averageRating");
+	        while (rs.next()) {
+	            String diningHallName = rs.getString("DiningHall");
+	            double averageRating = rs.getDouble("averageRating");
 
-                // Insert average rating into dininghall table
-                insertStatement.setString(1, diningHallName);
-                insertStatement.setDouble(2, averageRating);
-                insertStatement.executeUpdate();
-            }
+	            // Insert average rating into dininghall table
+	            insertStatement.setString(1, diningHallName);
+	            insertStatement.setDouble(2, averageRating);
+	            insertStatement.executeUpdate();
+	        }
 
-            // Close the insert statement and connections
-            insertStatement.close();
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+	        // Close the insert statement (no need to close the connection as it's used in try-with-resources)
+	        insertStatement.close();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
 	
 	/**
 	//test
