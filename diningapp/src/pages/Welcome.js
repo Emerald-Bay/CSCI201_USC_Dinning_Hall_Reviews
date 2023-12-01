@@ -62,7 +62,7 @@ const Welcome = () => {
             password: password,
         };
 
-        // fetch('http://localhost:8080/SignUpServlet', {
+        // fetch('http://localhost:8080/201Final/SignUpServlet', {
         //     method: 'POST',
         //     headers: {
         //         'Content-Type': 'application/json',
