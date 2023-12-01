@@ -66,8 +66,13 @@ const Village = () => {
     const navigate = useNavigate();
     const handleReviewClick = () => {
         // Navigate to addReview page
-        navigate('/add-review');
-      };
+        if(loggedInUser){
+            navigate('/add-review');
+        }else{
+            alert('You are not logged in!');
+        }
+        
+    };
 
     return (
         <Container>
@@ -87,7 +92,7 @@ const Village = () => {
 
             <Row className='justify-content-md-center mt-3 mb-3'>
             <Col md={6} className='text-center'>
-                    <h2><code>Menu:</code></h2>
+                    <h2><code>Menu</code></h2>
                 </Col>
                 <Col md={6} className='text-center'>
                     <h2><code>Reviews</code></h2>
@@ -100,10 +105,7 @@ const Village = () => {
                     />
                 </Col>
                 <Col md={6}>
-                    <ReviewList
-                        reviewArray={fakeReviewList}
-                    />
-                    <Row className='mt-3'>
+                    <Row>
                         <Col className='text-center'>
                             <Button
                                 className='text-center mb-3'
@@ -114,6 +116,11 @@ const Village = () => {
                             </Button>
                         </Col>
                     </Row>
+
+                    <ReviewList
+                        reviewArray={fakeReviewList}
+                    />
+                    
                 </Col>
             </Row>
         </Container>
