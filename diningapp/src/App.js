@@ -1,4 +1,5 @@
-import './styles/App.css';
+import './styles/App.css'; 
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -8,7 +9,10 @@ import EVK from './pages/EVK';
 import Parkside from './pages/Parkside';
 import Village from './pages/Village';
 import Profile from './pages/Profile';
-import USCImage from './img/USCDining.jpg'; 
+// import USCImage from './img/USCDining.jpg'; 
+import AddReview from './pages/AddReview';
+import logo from './img/logo.jpg';
+
 
 
 function App() {
@@ -27,12 +31,13 @@ function App() {
           >
             <img
               alt="Your Logo"
-              src={USCImage}
+              src={logo}
               style={{ 
                 width: "100px",
-                height: "100px",
-                // marginTop: "-20px",
-                paddingTop: "0px"
+                height: "auto",
+                marginTop: "10px",
+                marginBottom: "10px",
+                // paddingTop: "10px",
                }}
               className="d-inline-block align-top"
             />
@@ -46,16 +51,24 @@ function App() {
             <Nav.Link href="/parkside">Parkside</Nav.Link>
             <Nav.Link href="/village">Village</Nav.Link>
             <Nav.Link href="/profile">Profile</Nav.Link>
+            {/* <Nav.Link href="/add-review">Add Review</Nav.Link> */}
           </Nav>
         </Container>
       </Navbar>
 
       <Routes>
         <Route path="/" element={<Welcome />} />
+        {/* <Route path="/" element={<Welcome />} /> */}
         <Route path="/evk" element={<EVK />} />
         <Route path="/parkside" element={<Parkside />} />
         <Route path="/village" element={<Village />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} /> 
+
+        <Route path="/add-review" element={<AddReview />} />
+        <Route
+          path="/add-review"
+          element={<AddReview/>}
+        />
       </Routes>
     </Router>
   );
