@@ -32,7 +32,7 @@ const EVK = () => {
 
     const fakeReview =  {
         "username" : "Qball",
-        "content": "This persian chicken sucks!",
+        "content": "This persian chicken is mid!",
         "rating": "3.0",
         "date": "11/30/23",
         "time": "10:30AM",

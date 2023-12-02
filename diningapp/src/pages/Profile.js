@@ -72,7 +72,7 @@ const Profile = () => {
                                             width="60%"
                                         />
                                     </div>
-                                    <Card.Title>{loggedInUser.username}</Card.Title>
+                                    {/* <Card.Title>{loggedInUser.username}</Card.Title> */}
                                     <Card.Text>
                                         <p><b>Username:</b> {loggedInUser.username}</p>
                                         {/* <p><b>Join Date:</b> {new Date(loggedInUser.timestamp).toLocaleDateString()}</p> */}
